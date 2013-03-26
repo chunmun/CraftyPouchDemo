@@ -1,7 +1,57 @@
 Crafty.c('MenuButton', {
   init: function() {
-    this.requires('2D, Color, Text, Mouse');
+    this.requires('2D, Canvas, Text, Tween')
+      .attr({
+        x:20,
+        y:20,
+        w:80,
+        h:20,
+        alpha:0,
+      })
+      .text('MENU')
+      .textColor('#FFFFFF')
+      .textFont({'size' : '24px', 'family': 'Arial'})
+      .bind('toggleMenu', function(menuOn) {
+        this.menuOn = menuOn;
+        var newAlpha = 0;
+        if(menuOn) {
+          newAlpha = 1;
+        }
+        console.log(newAlpha);
+        this.tween({alpha: newAlpha},5);
+      });
   },
+});
+
+Crafty.c('Menu', {
+  init: function() {
+    this.requires('2D, Canvas, Color, Tween')
+      .attr({
+        x: 0,
+        y: 0,
+        h: Game.config.canvasHeight,
+        w: Game.config.canvasWidth/4,
+        alpha: 0,
+      })
+      .color('rgb(0,0,0)')
+      .bind('toggleMenu', function(menuOn) {
+        var newAlpha = 0;
+        if(menuOn) {
+          newAlpha = 0.8;
+        }
+        this.menuOn = menuOn;
+        this.tween({
+          alpha: newAlpha,
+        }, 10);
+      });
+
+      console.log('Created Menu');
+  },
+
+  setOptions: function(arr){
+
+  }
+
 });
 
 // The Grid component allows an element to be located
@@ -36,7 +86,7 @@ Crafty.c('PlayerCharacter', {
   init: function() {
     console.log('Inside Player init');
     this.requires('Actor, Fourway, Collision, sprPlayer, SpriteAnimation')
-      .fourway(4)
+      .fourway(2)
       .onHit('Village', this.visitVillage)
       .animate('PlayerMovingUp', 0,0,2)
       .animate('PlayerMovingRight', 0,1,2)
@@ -61,6 +111,12 @@ Crafty.c('PlayerCharacter', {
     }).bind('LoadData', function(data) {
       this.x = data.x;
       this.y = data.y;
+    }).bind('freezePlayer', function(onMenu) {
+      if(onMenu) {
+        this.fourway(0);
+      } else {
+        this.fourway(2);
+      }
     });
 
     console.log('In da dumps');
